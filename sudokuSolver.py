@@ -1,22 +1,3 @@
-"""
-README
-
-Built with
-    1. Python 3.8.6
-    2. PyGame
-
-Installation
-    1. Recommended Python version 3.8.6
-    2. PyGame does not support Python version 3.9.0 as of Oct 26, 2020
-    3. Install PyGame following https://www.pygame.org/wiki/GettingStarted
-
-How to play
-    1. Download file and place it in desired directory
-    2. Go to directory in terminal
-    3. launch sudokuSolver.py file in terminal, keeping terminal window
-        side-by-side the launched GUI for additional information.
-"""
-
 import pygame
 
 pygame.init()
@@ -68,7 +49,7 @@ font = pygame.font.SysFont('microsoftsansserifttf', 40)
 """
 GRID ___________________________________________________________________________
 """
-GRID_BLOCK_SIZE = 50        # size of length of each block in pixels
+GRID_BLOCK_SIZE = 60        # size of length of each block in pixels
 GRID_BLOCK_MARGINS = 1      # size of width of margins in pixels
 GRIDS_PER_SIDE = 9          # number of blocks per side
 
@@ -109,35 +90,17 @@ GAME_WINDOW = pygame.display.set_mode((GAME_WINDOW_SIZE, GAME_WINDOW_SIZE))
 CLOCK = pygame.time.Clock()
 GAME_WINDOW.fill(BACKGROUND)
 pygame.display.set_caption("Sudoku Solver")
+
+seconds_to_termination = 20
+iterations = 0
 running = True
+run = True
 
 
 """
 LOGIC __________________________________________________________________________
 """
-
-"""
-FIVE POSSIBILITIES FOR THE GRID:
-    1. Board not completed initially and solvable
-    2. Board completed initially and numbers are right
-    3. Board completed initially but numbers are wrong
-    4. Reset max possible value -> 1 of first non-0 entry
-        note: max possible value is the highest value that is insertable at
-        this location.
-    5. 0s can't be filled due to all 1-9 possibilities being taken elsewhere
-        along the horizontal, vertical, and inside the respective subgrid.
-"""
-
-
-run = True
-iterations = 0
-first_non_0_y = 0
-first_non_0_x = 0
-noChangesCount = 0
-is_maxValidNum_instance = False
-stopTesting = False
-time_since_finish = 0
-
+# If any position's value is not in 0-9, it is defaulted to 0
 for y in range(GRIDS_PER_SIDE):
     for x in range(GRIDS_PER_SIDE):
         if grid[y][x] < 0 or grid[y][x] > 9:
@@ -146,7 +109,7 @@ for y in range(GRIDS_PER_SIDE):
 
 def printGrid():
     print()
-    for row in range(9):
+    for row in range(GRIDS_PER_SIDE):
         print(grid[row])
     print()
 
@@ -154,31 +117,43 @@ def printGrid():
 # print the initial grid to terminal
 printGrid()
 
+# s is the string to print, b is the boolean that signifies success or not. If
+# successful, call printGrid().
+
+
+def printMessage(s, b):
+    global run
+    if b:
+        printGrid()
+    print(s + "\n")
+    pygame.display.set_caption(s)
+    drawBoard()
+    run = False
 
 # check if it's possible to insert n in g[y][x] following the rules:
-# 1. no duplicates of the number n in the row
-# 2. no duplicates of the number n in the column
-# 3. no duplicates of the number n in the subgrid that n is in
-def insertable(g, y, x, n):
+    # 1. no duplicates of the number n in the row
+    # 2. no duplicates of the number n in the column
+    # 3. no duplicates of the number n in the subgrid that n is in
+
+
+def insertable(y, x, n):
     # 1 and 2
     for sweep in range(GRIDS_PER_SIDE):
-        if g[y][sweep] == n:
+        if grid[y][sweep] == n:
             return False
-        if g[sweep][x] == n:
+        if grid[sweep][x] == n:
             return False
     # 3
     subgrid_x = (x // 3) * 3
     subgrid_y = (y // 3) * 3
     for i in range(0, 3):
         for j in range(0, 3):
-            if g[subgrid_y + i][subgrid_x + j] == n:
+            if grid[subgrid_y + i][subgrid_x + j] == n:
                 return False
     # if insertable (all conditions pass), return True
     return True
 
 
-# draws each grid index of board and overlays text on top of their respective
-    # grids
 def drawBoard():
     for y in range(GRIDS_PER_SIDE):
         for x in range(GRIDS_PER_SIDE):
@@ -196,14 +171,12 @@ def drawBoard():
                                      # the "+ 10" and "+ 5" places the numbers in the center
                                      # of their respective grids
                                      (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * \
-                                     x + GRID_BLOCK_MARGINS + 10,
+                                     x + GRID_BLOCK_MARGINS + 15,
                                      (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * \
-                                     y + GRID_BLOCK_MARGINS + 5
+                                     y + GRID_BLOCK_MARGINS + 10
                                  )
                                  )
-    """
-    TICK FRAMES/SEC AND FLIP (INSIDE drawBoard())_______________________________
-    """
+    # TICK FRAMES/SEC AND FLIP (INSIDE drawBoard())
     CLOCK.tick(TICKRATE)
     pygame.display.flip()
 
@@ -212,68 +185,78 @@ def drawBoard():
 drawBoard()
 
 
-def if_Zero_0s():
-    global run
-    zeros = 0
-    temp = 0
+# return True at the first instance of a 0 being found, False if no 0s exist.
+def zeros_exist():
     for y in range(GRIDS_PER_SIDE):
         for x in range(GRIDS_PER_SIDE):
             if grid[y][x] == 0:
-                zeros += 1
-    if zeros == 0:
-        for y in range(GRIDS_PER_SIDE):
-            for x in range(GRIDS_PER_SIDE):
-                temp = grid[y][x]
-                grid[y][x] = 0
-                if insertable(grid, y, x, temp):
-                    grid[y][x] = temp
-                else:
-                    drawBoard()
-                    print("Invalid grid given\n")
-                    pygame.display.set_caption("Invalid grid given")
-                    run = False
-                    return True
-        drawBoard()
-        printGrid()
-        print("Grid complete\n")
-        pygame.display.set_caption("Grid complete")
-        run = False
-        return True
+                return True
     return False
 
 
-stopTesting = if_Zero_0s()
+def check_all_non0_placements_validity():
+    global run
+    temp = 0
+    for y in range(GRIDS_PER_SIDE):
+        for x in range(GRIDS_PER_SIDE):
+            if grid[y][x] != 0:
+                temp = grid[y][x]
+                grid[y][x] = 0
+                if insertable(y, x, temp):
+                    grid[y][x] = temp
+                else:
+                    grid[y][x] = temp
+                    printMessage("Invalid", False)
+                    return False
+    return True
+
+# call only once before solve() to check for validity of all original
+    # 0 placements. Return True if at least one 1-9 digit is insertable
+    # at any original 0 positon. False if all 1-9 digits are taken in the
+    # row, column, or subgrid.
 
 
-def find_first_0_coords():
-    global first_non_0_y
-    global first_non_0_x
-    if stopTesting == False:
-        for y in range(GRIDS_PER_SIDE):
-            for x in range(GRIDS_PER_SIDE):
-                if grid[y][x] == 0:
-                    first_non_0_y = y
-                    first_non_0_x = x
-                    return
+def check_all_0_placements_validity():
+    global run
+    temp = 0
+    insertable_fails = 0
+    for y in range(GRIDS_PER_SIDE):
+        for x in range(GRIDS_PER_SIDE):
+            if grid[y][x] == 0:
+                for n in range(1, GRIDS_PER_SIDE + 1):
+                    if insertable(y, x, n) == False:
+                        insertable_fails += 1
+                    if insertable_fails == 9:
+                        printMessage(
+                            f"Invalid, position (%d, %d) cannot hold any digit 1-9" % (x + 1, y + 1), False)
+                        return False
+            insertable_fails = 0
+    return True
 
 
-find_first_0_coords()
+# run the initial checks for all initial 0 and non-0 placements
+check_all_non0_placements_validity()
+check_all_0_placements_validity()
 
-maxValidNum = 0
-for n in range(1, GRIDS_PER_SIDE):
-    if insertable(grid, first_non_0_y, first_non_0_x, n):
-        maxValidNum = n
+
+def zeros_and_validity():
+    global run
+    if zeros_exist() == False:
+        if check_all_non0_placements_validity():
+            printMessage("Grid complete", True)
+            return
+        else:
+            printMessage("Invalid", False)
+            return
+    else:
+        if check_all_non0_placements_validity() == False:
+            printMessage("Invalid", False)
+            return
 
 
 def solve():
     global run
     global iterations
-    global first_non_0_y
-    global first_non_0_x
-    global is_maxValidNum_instance
-    global noChangesCount
-    global stopTesting
-    global maxValidNum
 
     while run:
         for event in pygame.event.get():
@@ -281,39 +264,25 @@ def solve():
                 run = False
                 return
 
-        if grid[first_non_0_y][first_non_0_x] == maxValidNum:
-            is_maxValidNum_instance = True
-        if grid[first_non_0_y][first_non_0_x] == 1 and is_maxValidNum_instance:
-            drawBoard()
-            print("Grid unsolvable\n")
-            pygame.display.set_caption("Grid unsolvable")
-            run = False
-            return
-
         iterations += 1
         # Speed up the solve significantly.
-        if iterations % 20 == 0:
+        if iterations % 100 == 0:
             drawBoard()
 
         for y in range(GRIDS_PER_SIDE):
             for x in range(GRIDS_PER_SIDE):
                 if grid[y][x] == 0:
                     for n in range(1, GRIDS_PER_SIDE + 1):
-
-                        noChangesCount += 1
-                        if noChangesCount == 10:
-                            print("Grid unsolvable\n")
-                            pygame.display.set_caption("Grid unsolvable")
-                            run = False
-                            return
-
-                        if insertable(grid, y, x, n):
+                        if insertable(y, x, n):
                             grid[y][x] = n
-                            noChangesCount = 0
-                            if_Zero_0s()
+                            # if no more zeros, print "Invalid", set run to
+                            # False, and return out of the loop, ending
+                            # solve() and moving on to TICKRATE = 1
+                            zeros_and_validity()
+                            if zeros_exist() == False:
+                                return
                             solve()
                             grid[y][x] = 0
-                            noChangesCount = 0
                     return
 
 
@@ -333,10 +302,10 @@ while running:
 
     TICKRATE = 1
 
-    print(f"%d seconds until termination" % (20 - time_since_finish))
-    if time_since_finish == 20:
+    print(f"%d seconds until termination" % seconds_to_termination)
+    if seconds_to_termination == 0:
         running = False
-    time_since_finish += 1
+    seconds_to_termination -= 1
 
     """
     TICK FRAMES/SEC AND FLIP ___________________________________________________
