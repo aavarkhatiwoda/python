@@ -33,7 +33,6 @@ COLOR_LIST = [
     [C7, C8, C9]    # [2][0-2]
 ]
 
-
 def subgrid_color_picker(y, x):
     subgrid_y = y // 3      # go from 0-8 to 0-2 (whole grid to sub grid)
     subgrid_x = x // 3      # go from 0-8 to 0-2 (whole grid to sub grid)
@@ -54,7 +53,7 @@ GRID_BLOCK_MARGINS = 1      # size of width of margins in pixels
 GRIDS_PER_SIDE = 9          # number of blocks per side
 
 
-# WORLD'S HARDEST SUDOKU GRID CLAIMED BY FINNISH MATHEMATICIAN ARTO INKALA
+# World's hardest sudoku grid claimed by finnish mathematician Arto Inkala
 grid = [
     [8, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 3, 6, 0, 0, 0, 0, 0],
@@ -66,9 +65,8 @@ grid = [
     [0, 0, 8, 5, 0, 0, 0, 1, 0],
     [0, 9, 0, 0, 0, 0, 4, 0, 0]
 ]
-
 """
-COMPLETE GRID FROM ABOVE:
+COMPLETED GRID FROM ABOVE:
 [8, 1, 2, 7, 5, 3, 6, 4, 9],
 [9, 4, 3, 6, 8, 2, 1, 7, 5],
 [6, 7, 5, 4, 9, 1, 2, 8, 3],
@@ -106,21 +104,17 @@ for y in range(GRIDS_PER_SIDE):
         if grid[y][x] < 0 or grid[y][x] > 9:
             grid[y][x] = 0
 
-
 def printGrid():
     print()
     for row in range(GRIDS_PER_SIDE):
         print(grid[row])
     print()
 
-
 # print the initial grid to terminal
 printGrid()
 
 # s is the string to print, b is the boolean that signifies success or not. If
-# successful, call printGrid().
-
-
+    # successful, call printGrid().
 def printMessage(s, b):
     global run
     if b:
@@ -134,8 +128,6 @@ def printMessage(s, b):
     # 1. no duplicates of the number n in the row
     # 2. no duplicates of the number n in the column
     # 3. no duplicates of the number n in the subgrid that n is in
-
-
 def insertable(y, x, n):
     # 1 and 2
     for sweep in range(GRIDS_PER_SIDE):
@@ -158,32 +150,30 @@ def drawBoard():
     for y in range(GRIDS_PER_SIDE):
         for x in range(GRIDS_PER_SIDE):
             pygame.draw.rect(GAME_WINDOW, subgrid_color_picker(y, x),
-                             [
-                (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * x + GRID_BLOCK_MARGINS,
-                (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * y + GRID_BLOCK_MARGINS,
-                GRID_BLOCK_SIZE,
-                GRID_BLOCK_SIZE
-            ])
+                [
+                    (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * x + GRID_BLOCK_MARGINS,
+                    (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * y + GRID_BLOCK_MARGINS,
+                    GRID_BLOCK_SIZE,
+                    GRID_BLOCK_SIZE
+                ])
             if grid[y][x] != 0:
                 text = font.render(str(grid[y][x]), 1, (0, 0, 0))
                 GAME_WINDOW.blit(text,
-                                 (
-                                     # the "+ 10" and "+ 5" places the numbers in the center
-                                     # of their respective grids
-                                     (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * \
-                                     x + GRID_BLOCK_MARGINS + 15,
-                                     (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * \
-                                     y + GRID_BLOCK_MARGINS + 10
-                                 )
-                                 )
-    # TICK FRAMES/SEC AND FLIP (INSIDE drawBoard())
+                    (
+                        # the "+ 10" and "+ 5" places the numbers in the center
+                        # of their respective grids
+                        (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * \
+                            x + GRID_BLOCK_MARGINS + 15,
+                        (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * \
+                            y + GRID_BLOCK_MARGINS + 10
+                    )
+                )
+    # Tick frames/sec and flip (inside drawBoard())
     CLOCK.tick(TICKRATE)
     pygame.display.flip()
 
-
 # draw the board initially
 drawBoard()
-
 
 # return True at the first instance of a 0 being found, False if no 0s exist.
 def zeros_exist():
@@ -214,8 +204,6 @@ def check_all_non0_placements_validity():
     # 0 placements. Return True if at least one 1-9 digit is insertable
     # at any original 0 positon. False if all 1-9 digits are taken in the
     # row, column, or subgrid.
-
-
 def check_all_0_placements_validity():
     global run
     temp = 0
@@ -265,7 +253,8 @@ def solve():
                 return
 
         iterations += 1
-        # Speed up the solve significantly.
+        # Speed up the solve significantly. Can be changed to one's liking.
+            # Recommend 10 to 100
         if iterations % 100 == 0:
             drawBoard()
 
