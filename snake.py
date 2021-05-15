@@ -85,25 +85,17 @@ if GRID_BLOCK_MARGINS != 1:
 #           4 0 0 0 4
 #           4 4 4 4 4
 grid = []
-grid_first_and_last_rows = [4]
-grid_middle_rows = []
-grid_middle_rows_indbounds = [4]
-grid_middle_rows_indmiddle = [0]
+grid_first_and_last_rows = [4]*GRIDS_PER_SIDE
+grid_middle_rows = [4]
 
-# for grid_first_and_last_rows
-grid_first_and_last_rows *= GRIDS_PER_SIDE
+for i in range(GRIDS_PER_SIDE-2):
+    grid_middle_rows.append(0)
+grid_middle_rows.append(4)
 
-# for grid_middle_rows
-grid_middle_rows = grid_middle_rows_indbounds +\
-    grid_middle_rows_indmiddle * (GRIDS_PER_SIDE - 2) +\
-    grid_middle_rows_indbounds
-
-# put grid_first_and_last_rows and grid_middle_rows in their proper locations
-for row in range(GRIDS_PER_SIDE):
-    if row == 0 or row == GRIDS_PER_SIDE - 1:
-        grid.append(grid_first_and_last_rows[:])
-    else:
-        grid.append(grid_middle_rows[:])
+grid.append(grid_first_and_last_rows[:])
+for i in range(GRIDS_PER_SIDE-2):
+    grid.append(grid_middle_rows[:])
+grid.append(grid_first_and_last_rows[:])
 
 
 """
@@ -114,7 +106,6 @@ Y = GRIDS_PER_SIDE // 2   # unchanging initial y position in center of grid y-wi
 X = GRIDS_PER_SIDE // 2   # unchanging initial x position in center of grid x-wise
 y_velocity = 0          # initial y velocity = 0, not moving in the y-direction
 x_velocity = VELOCITY   # initial x velocity = 1, moving right
-
 
 def resetSnake():
     # sweeps the current grid for any snake positons, '1' and '2', and
@@ -134,12 +125,9 @@ snake_picture = resetSnake()  # index 0 = head, other indices = body
 # allow snake to grow if it gets food, deny if it doesn't
 delete_last_snake_body = True
 
-
 """
 FOOD ___________________________________________________________________________
 """
-
-
 def generateFood():
     # reason is to set food_y and food_x to something not in snake_picture.
     # set food_y and food_x initially to snake head values so that the food_y
@@ -147,10 +135,8 @@ def generateFood():
         # values by comparison in the while loop
     food_y, food_x = snake_picture[0][0], snake_picture[0][1]
     while [food_y, food_x] in snake_picture:
-        food_y = random.randrange(
-            1, GRIDS_PER_SIDE - 1)   # not in wall indices
-        food_x = random.randrange(
-            1, GRIDS_PER_SIDE - 1)   # not in wall indices
+        food_y = random.randrange(1, GRIDS_PER_SIDE - 1)   # not in wall indices
+        food_x = random.randrange(1, GRIDS_PER_SIDE - 1)   # not in wall indices
     return [food_y, food_x]
 
 
@@ -283,10 +269,8 @@ while running:
     DRAW SNAKE _________________________________________________________________
     """
     # snake head after moving
-    new_snake_head = [[snake_picture[0][0] + y_velocity, snake_picture[0][1] +
-                       x_velocity]]
-    grid[snake_picture[len(snake_picture) - 1][0]][snake_picture[len
-                                                                 (snake_picture) - 1][1]] = 0
+    new_snake_head = [[snake_picture[0][0] + y_velocity, snake_picture[0][1] + x_velocity]]
+    grid[snake_picture[len(snake_picture) - 1][0]][snake_picture[len(snake_picture) - 1][1]] = 0
 
     # if no collision with food
     if delete_last_snake_body:
@@ -319,7 +303,7 @@ while running:
     for y in range(GRIDS_PER_SIDE):
         for x in range(GRIDS_PER_SIDE):
             pygame.draw.rect(GAME_WINDOW, COLOR_LIST[grid[y][x]],
-                             [
+                [
                 (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * x + GRID_BLOCK_MARGINS,
                 (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * y + GRID_BLOCK_MARGINS,
                 GRID_BLOCK_SIZE,
