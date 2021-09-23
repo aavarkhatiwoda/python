@@ -6,7 +6,7 @@
 #           decimal 32 for 'space',
 #           none of the above will result in 'other'
 
-# If a character appeares 0 times, it will be skipped in the final tally
+# If a character appeares 0 times, it will be skipped in the final tally output
 
 # ord() converts from character to its dec value
 # str() converts from dec value to its character
