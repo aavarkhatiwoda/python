@@ -32,9 +32,9 @@ def inputString(stringInput):
             elif ord(char) >= 48 and ord(char) <= 57:   # ASCII 0-9 is 48-57
                 tallyList[ord(char)-22] += 1            # shift 48-57 to indices 26-35
             elif ord(char) == 32:                       # ASCII space is 32
-                tallyList[36] += 1                      # increment index 35 by 1
+                tallyList[36] += 1                      # increment index 36 (the space index) by 1
             else:
-                tallyList[37] += 1                       # any other character will increment index 37 by 1
+                tallyList[37] += 1                       # any other character will increment index 37 (the 'other' index) by 1
 
         for letters in range(26):
             if tallyList[letters] > 0:
