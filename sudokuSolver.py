@@ -53,7 +53,7 @@ GRID_BLOCK_MARGINS = 1      # size of width of margins in pixels
 GRIDS_PER_SIDE = 9          # number of blocks per side
 
 
-# World's hardest sudoku grid claimed by finnish mathematician Arto Inkala
+# World's hardest sudoku grid claimed by Finnish mathematician Arto Inkala
 grid = [
     [8, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 3, 6, 0, 0, 0, 0, 0],
@@ -79,6 +79,7 @@ COMPLETED GRID FROM ABOVE:
 """
 
 
+
 """
 PRE-LOOP _______________________________________________________________________
 """
@@ -87,7 +88,7 @@ GAME_WINDOW_SIZE = (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * GRIDS_PER_SIDE +\
 GAME_WINDOW = pygame.display.set_mode((GAME_WINDOW_SIZE, GAME_WINDOW_SIZE))
 CLOCK = pygame.time.Clock()
 GAME_WINDOW.fill(BACKGROUND)
-pygame.display.set_caption("Sudoku Solver")
+pygame.display.set_caption("Sudoku Solver GUI")
 
 seconds_to_termination = 20
 iterations = 0
@@ -253,9 +254,10 @@ def solve():
                 return
 
         iterations += 1
-        # Speed up the solve significantly. Can be changed to one's liking.
-            # Recommend 10 to 100
-        if iterations % 100 == 0:
+        # higher iterations value speeds up solve time by updating the board
+            # after every x changes in % x instead of every change.
+            # Recommend 10 to 50.
+        if iterations % 50 == 0:
             drawBoard()
 
         for y in range(GRIDS_PER_SIDE):
