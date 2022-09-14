@@ -1,3 +1,25 @@
+#
+
+
+
+
+# FOR MAC ONLY:
+    # The song must be downloaded through Apple Music on Mac.
+    # change the computer name from 'nameofmac' in constPath to your Mac's name.
+        # Your Mac's name can be found in front of the '@' in terminal.
+        # It is in the format 'X@Xs-MacBook-Pro ~ %'.
+    # from terminal go to the file's directory and run the file through the
+    # commands:
+        # python3
+        # from musicFinder import play
+        # play()
+    # from now on, just type in any substring of the song.
+    # For example, to play 'Rolling in the Deep' by Adele,
+        # type in 'Rolling', 'Roll', 'Ro', 'Deep', 'De', or anything similar.
+        # Note that the matching is not caps sensitive.
+    # Tyoe 'exit' to exit.
+    # If any songs have a forward slash, replace this with an underscore.
+
 import os
 
 def completeCommand(command):
@@ -9,7 +31,7 @@ def completeCommand(command):
     command = 'open ' + command
     return command
 
-constPath = '/Users/aavar/Music/Music/Media.localized/Apple Music/'
+constPath = '/Users/nameofmac/Music/Music/Media.localized/Apple Music/'
 artistDirectory = os.listdir(constPath)
 
 # Find titles that contain the passed in word
@@ -78,6 +100,8 @@ def play():
         if inp == 'exit':
             break
         findSong(inp)
+
+
 
 
 
