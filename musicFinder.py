@@ -64,7 +64,21 @@ def findSong(wordInSong):
 
     else:
         for songPossibility in range(len(potentialSongsList)):
-            print(" {}. {}".format(songPossibility + 1, potentialSongsList[songPossibility]))
+            songDisplay = potentialSongsList[songPossibility]
+            songDisplay = potentialSongsList[songPossibility][potentialSongsList[songPossibility].index('/') + 1:]
+            songDisplay = songDisplay[songDisplay.index('/') + 1:]
+
+            if '.movpkg' in songDisplay:
+                songDisplay = songDisplay[:songDisplay.index('.movpkg')]
+            if '.m4p' in songDisplay:
+                songDisplay = songDisplay[:songDisplay.index('.m4p')]
+
+            songDisplay = songDisplay[songDisplay.index(' ') + 1:]
+
+            songDisplay_artist = potentialSongsList[songPossibility][:potentialSongsList[songPossibility].index('/')]
+
+
+            print(" {}. {} | {}".format(songPossibility + 1, songDisplay_artist, songDisplay))
 
         numInput = input("Input the number corresponding with the intended song: ")
         numInputIsInt = False
