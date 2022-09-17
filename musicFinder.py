@@ -17,7 +17,7 @@
     # For example, to play 'Rolling in the Deep' by Adele,
         # type in 'Rolling', 'Roll', 'Ro', 'Deep', 'De', or anything similar.
         # Note that the matching is not caps sensitive.
-    # Tyoe 'exit' to exit.
+    # Type 'exit' to exit.
     # If any songs have a forward slash, replace this with an underscore.
 
 import os
@@ -78,7 +78,7 @@ def findSong(wordInSong):
             songDisplay_artist = potentialSongsList[songPossibility][:potentialSongsList[songPossibility].index('/')]
 
 
-            print(" {}. {} | {}".format(songPossibility + 1, songDisplay_artist, songDisplay))
+            print("  {}. {} | {}".format(songPossibility + 1, songDisplay_artist, songDisplay))
 
         numInput = input("Input the number corresponding with the intended song: ")
         numInputIsInt = False
