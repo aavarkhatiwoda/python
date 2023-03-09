@@ -3,7 +3,7 @@ README
 
 Built with
     1. Python 3.8.6
-    2. PyGame
+    2. PyGame 2.1.2
 
 Installation
     1. Recommended Python version 3.8.6
@@ -31,7 +31,7 @@ NOTE: __________________________________________________________________________
     * user may change TICKRATE in the SETUP section below (recommended between
         20 and 60, inclusive)
     * user may change the color values in the COLORS section below
-    * user may change GRIDS_PER_SIDE in the GRID section below (recommended
+    * user may change BLOCKS_PER_SIDE in the GRID section below (recommended
         between 20 and 40, inclusive)
 
     *** ALWAYS MOVE/GENERATE SNAKE BEFORE GENERATING FOOD
@@ -66,34 +66,34 @@ BACKGROUND = (0, 0, 0)            # black (not in list above)
 """
 GRID ___________________________________________________________________________
 """
-GRID_BLOCK_SIZE = 20       # in pixels
-GRID_BLOCK_MARGINS = 1      # in pixels
-GRIDS_PER_SIDE = 20
+BLOCK_SIZE = 20       # in pixels
+BLOCK_MARGINS = 1      # in pixels
+BLOCKS_PER_SIDE = 30
 
 # constrict grid block margins
-if GRID_BLOCK_MARGINS != 1:
-    GRID_BLOCK_MARGINS = 1
+if BLOCK_MARGINS != 1:
+    BLOCK_MARGINS = 1
 
 
 # initialize grid walls, walls are '4'
 #   * first and last rows are all walls
 #   * non-first, non-last rows are walls on the edges, unassigned in the middle
-#   EX, GRIDS_PER_SIDE = 5:
+#   EX, BLOCKS_PER_SIDE = 5:
 #           4 4 4 4 4
 #           4 0 0 0 4
 #           4 0 0 0 4
 #           4 0 0 0 4
 #           4 4 4 4 4
 grid = []
-grid_first_and_last_rows = [4]*GRIDS_PER_SIDE
+grid_first_and_last_rows = [4]*BLOCKS_PER_SIDE
 grid_middle_rows = [4]
 
-for i in range(GRIDS_PER_SIDE-2):
+for i in range(BLOCKS_PER_SIDE-2):
     grid_middle_rows.append(0)
 grid_middle_rows.append(4)
 
 grid.append(grid_first_and_last_rows[:])
-for i in range(GRIDS_PER_SIDE-2):
+for i in range(BLOCKS_PER_SIDE-2):
     grid.append(grid_middle_rows[:])
 grid.append(grid_first_and_last_rows[:])
 
@@ -102,16 +102,16 @@ grid.append(grid_first_and_last_rows[:])
 SNAKE __________________________________________________________________________
 """
 VELOCITY = 1            # standard, unchanging velocity. DO NOT CHANGE FROM 1.
-Y = GRIDS_PER_SIDE // 2   # unchanging initial y position in center of grid y-wise
-X = GRIDS_PER_SIDE // 2   # unchanging initial x position in center of grid x-wise
+Y = BLOCKS_PER_SIDE // 2   # unchanging initial y position in center of grid y-wise
+X = BLOCKS_PER_SIDE // 2   # unchanging initial x position in center of grid x-wise
 y_velocity = 0          # initial y velocity = 0, not moving in the y-direction
 x_velocity = VELOCITY   # initial x velocity = 1, moving right
 
 def resetSnake():
     # sweeps the current grid for any snake positons, '1' and '2', and
         # unassigns them back to '0'
-    for y in range(1, GRIDS_PER_SIDE - 1):             # not in wall indices
-        for x in range(1, GRIDS_PER_SIDE - 1):         # not in wall indices
+    for y in range(1, BLOCKS_PER_SIDE - 1):             # not in wall indices
+        for x in range(1, BLOCKS_PER_SIDE - 1):         # not in wall indices
             if grid[y][x] in [1, 2]:
                 grid[y][x] = 0
     grid[Y][X] = 1
@@ -135,8 +135,8 @@ def generateFood():
         # values by comparison in the while loop
     food_y, food_x = snake_picture[0][0], snake_picture[0][1]
     while [food_y, food_x] in snake_picture:
-        food_y = random.randrange(1, GRIDS_PER_SIDE - 1)   # not in wall indices
-        food_x = random.randrange(1, GRIDS_PER_SIDE - 1)   # not in wall indices
+        food_y = random.randrange(1, BLOCKS_PER_SIDE - 1)   # not in wall indices
+        food_x = random.randrange(1, BLOCKS_PER_SIDE - 1)   # not in wall indices
     return [food_y, food_x]
 
 
@@ -151,16 +151,16 @@ attempt = 1         # attempt starts at 1
 score = 0           # score starts at 0
 highscore = 0       # high score starts at 0
 # movesleft = area of playable grid plus an extra 10%
-# playable grid means non-wall indices, which is (GRIDS_PER_SIDE-2)**2
-movesleft = int(1.1 * ((GRIDS_PER_SIDE - 2)**2))
+# playable grid means non-wall indices, which is (BLOCKS_PER_SIDE-2)**2
+movesleft = int(1.1 * ((BLOCKS_PER_SIDE - 2)**2))
 MOVESLEFT_ORIGINAL = movesleft          # unchanging original moves count
 
 
 """
 PRE-LOOP _______________________________________________________________________
 """
-GAME_WINDOW_SIZE = (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * GRIDS_PER_SIDE +\
-    GRID_BLOCK_MARGINS
+GAME_WINDOW_SIZE = (BLOCK_SIZE + BLOCK_MARGINS) * BLOCKS_PER_SIDE +\
+    BLOCK_MARGINS
 GAME_WINDOW = pygame.display.set_mode((GAME_WINDOW_SIZE, GAME_WINDOW_SIZE))
 CLOCK = pygame.time.Clock()
 GAME_WINDOW.fill(BACKGROUND)
@@ -235,8 +235,8 @@ while running:
     m = False   # moves left
 
     # hit wall
-    if snake_picture[0][0] in [0, GRIDS_PER_SIDE - 1] or\
-            snake_picture[0][1] in [0, GRIDS_PER_SIDE - 1]:
+    if snake_picture[0][0] in [0, BLOCKS_PER_SIDE - 1] or\
+            snake_picture[0][1] in [0, BLOCKS_PER_SIDE - 1]:
         w = True
         grid[snake_picture[0][0]][snake_picture[0][1]] = 4
     # hit itself (excluding head)
@@ -300,14 +300,14 @@ while running:
     # set food position to 3 so it can be referenced as COLOR_LIST[3]
     grid[food_picture[0]][food_picture[1]] = 3
 
-    for y in range(GRIDS_PER_SIDE):
-        for x in range(GRIDS_PER_SIDE):
+    for y in range(BLOCKS_PER_SIDE):
+        for x in range(BLOCKS_PER_SIDE):
             pygame.draw.rect(GAME_WINDOW, COLOR_LIST[grid[y][x]],
                 [
-                (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * x + GRID_BLOCK_MARGINS,
-                (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * y + GRID_BLOCK_MARGINS,
-                GRID_BLOCK_SIZE,
-                GRID_BLOCK_SIZE
+                (BLOCK_SIZE + BLOCK_MARGINS) * x + BLOCK_MARGINS,
+                (BLOCK_SIZE + BLOCK_MARGINS) * y + BLOCK_MARGINS,
+                BLOCK_SIZE,
+                BLOCK_SIZE
             ])
 
     """
