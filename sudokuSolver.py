@@ -1,3 +1,5 @@
+# Running PyGame version: 2.1.2
+
 import pygame
 
 pygame.init()
@@ -6,7 +8,6 @@ pygame.init()
 SETUP __________________________________________________________________________
 """
 # TICKRATE is updates/second
-# set TICKRATE to maximum monitor refresh rate.
 TICKRATE = 60
 
 
@@ -48,12 +49,12 @@ font = pygame.font.SysFont('microsoftsansserifttf', 40)
 """
 GRID ___________________________________________________________________________
 """
-GRID_BLOCK_SIZE = 60        # size of length of each block in pixels
-GRID_BLOCK_MARGINS = 1      # size of width of margins in pixels
-GRIDS_PER_SIDE = 9          # number of blocks per side
+BLOCK_SIZE = 60             # size of length of each block in pixels
+BLOCK_MARGINS = 1           # size of width of margins in pixels
+BLOCKS_PER_SIDE = 9         # number of blocks per side
 
 
-# World's hardest sudoku grid claimed by Finnish mathematician Arto Inkala
+# Insert grid below
 grid = [
     [8, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 3, 6, 0, 0, 0, 0, 0],
@@ -79,16 +80,15 @@ COMPLETED GRID FROM ABOVE:
 """
 
 
-
 """
 PRE-LOOP _______________________________________________________________________
 """
-GAME_WINDOW_SIZE = (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * GRIDS_PER_SIDE +\
-    GRID_BLOCK_MARGINS
+GAME_WINDOW_SIZE = (BLOCK_SIZE + BLOCK_MARGINS) * BLOCKS_PER_SIDE +\
+    BLOCK_MARGINS
 GAME_WINDOW = pygame.display.set_mode((GAME_WINDOW_SIZE, GAME_WINDOW_SIZE))
 CLOCK = pygame.time.Clock()
 GAME_WINDOW.fill(BACKGROUND)
-pygame.display.set_caption("Sudoku Solver GUI")
+pygame.display.set_caption("Sudoku Solver Visualizer")
 
 seconds_to_termination = 20
 iterations = 0
@@ -100,14 +100,14 @@ run = True
 LOGIC __________________________________________________________________________
 """
 # If any position's value is not in 0-9, it is defaulted to 0
-for y in range(GRIDS_PER_SIDE):
-    for x in range(GRIDS_PER_SIDE):
+for y in range(BLOCKS_PER_SIDE):
+    for x in range(BLOCKS_PER_SIDE):
         if grid[y][x] < 0 or grid[y][x] > 9:
             grid[y][x] = 0
 
 def printGrid():
     print()
-    for row in range(GRIDS_PER_SIDE):
+    for row in range(BLOCKS_PER_SIDE):
         print(grid[row])
     print()
 
@@ -131,7 +131,7 @@ def printMessage(s, b):
     # 3. no duplicates of the number n in the subgrid that n is in
 def insertable(y, x, n):
     # 1 and 2
-    for sweep in range(GRIDS_PER_SIDE):
+    for sweep in range(BLOCKS_PER_SIDE):
         if grid[y][sweep] == n:
             return False
         if grid[sweep][x] == n:
@@ -148,25 +148,25 @@ def insertable(y, x, n):
 
 
 def drawBoard():
-    for y in range(GRIDS_PER_SIDE):
-        for x in range(GRIDS_PER_SIDE):
+    for y in range(BLOCKS_PER_SIDE):
+        for x in range(BLOCKS_PER_SIDE):
             pygame.draw.rect(GAME_WINDOW, subgrid_color_picker(y, x),
                 [
-                    (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * x + GRID_BLOCK_MARGINS,
-                    (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * y + GRID_BLOCK_MARGINS,
-                    GRID_BLOCK_SIZE,
-                    GRID_BLOCK_SIZE
+                    (BLOCK_SIZE + BLOCK_MARGINS) * x + BLOCK_MARGINS,
+                    (BLOCK_SIZE + BLOCK_MARGINS) * y + BLOCK_MARGINS,
+                    BLOCK_SIZE,
+                    BLOCK_SIZE
                 ])
             if grid[y][x] != 0:
                 text = font.render(str(grid[y][x]), 1, (0, 0, 0))
                 GAME_WINDOW.blit(text,
                     (
-                        # the "+ 10" and "+ 5" places the numbers in the center
+                        # the "+ 15" and "+ 10" places the numbers in the center
                         # of their respective grids
-                        (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * \
-                            x + GRID_BLOCK_MARGINS + 15,
-                        (GRID_BLOCK_SIZE + GRID_BLOCK_MARGINS) * \
-                            y + GRID_BLOCK_MARGINS + 10
+                        (BLOCK_SIZE + BLOCK_MARGINS) * \
+                            x + BLOCK_MARGINS + 20,
+                        (BLOCK_SIZE + BLOCK_MARGINS) * \
+                            y + BLOCK_MARGINS + 20
                     )
                 )
     # Tick frames/sec and flip (inside drawBoard())
@@ -178,8 +178,8 @@ drawBoard()
 
 # return True at the first instance of a 0 being found, False if no 0s exist.
 def zeros_exist():
-    for y in range(GRIDS_PER_SIDE):
-        for x in range(GRIDS_PER_SIDE):
+    for y in range(BLOCKS_PER_SIDE):
+        for x in range(BLOCKS_PER_SIDE):
             if grid[y][x] == 0:
                 return True
     return False
@@ -188,8 +188,8 @@ def zeros_exist():
 def check_all_non0_placements_validity():
     global run
     temp = 0
-    for y in range(GRIDS_PER_SIDE):
-        for x in range(GRIDS_PER_SIDE):
+    for y in range(BLOCKS_PER_SIDE):
+        for x in range(BLOCKS_PER_SIDE):
             if grid[y][x] != 0:
                 temp = grid[y][x]
                 grid[y][x] = 0
@@ -209,10 +209,10 @@ def check_all_0_placements_validity():
     global run
     temp = 0
     insertable_fails = 0
-    for y in range(GRIDS_PER_SIDE):
-        for x in range(GRIDS_PER_SIDE):
+    for y in range(BLOCKS_PER_SIDE):
+        for x in range(BLOCKS_PER_SIDE):
             if grid[y][x] == 0:
-                for n in range(1, GRIDS_PER_SIDE + 1):
+                for n in range(1, BLOCKS_PER_SIDE + 1):
                     if insertable(y, x, n) == False:
                         insertable_fails += 1
                     if insertable_fails == 9:
@@ -260,10 +260,10 @@ def solve():
         if iterations % 50 == 0:
             drawBoard()
 
-        for y in range(GRIDS_PER_SIDE):
-            for x in range(GRIDS_PER_SIDE):
+        for y in range(BLOCKS_PER_SIDE):
+            for x in range(BLOCKS_PER_SIDE):
                 if grid[y][x] == 0:
-                    for n in range(1, GRIDS_PER_SIDE + 1):
+                    for n in range(1, BLOCKS_PER_SIDE + 1):
                         if insertable(y, x, n):
                             grid[y][x] = n
                             # if no more zeros, print "Invalid", set run to
